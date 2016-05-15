@@ -59,3 +59,7 @@ footer{
     outline: none!important;
     background-color: #DDD!important;
 }
+
+.score{
+    color:#DDD;
+}

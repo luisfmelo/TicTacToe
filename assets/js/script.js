@@ -7,6 +7,11 @@ $(document).ready(function(){
     pc = "O";
     turn = 1;
     gamePlaying = true;
+    userScore = 0;
+    pcScore = 0;
+
+    $('#userScore').html(userScore);
+    $('#pcScore').html(pcScore);
 
     //Random to decide wich one starts to play
 
@@ -53,7 +58,17 @@ checkEndOfGame = function(){
         end = 0;
 
     if ( end != -1)
+    {
+        if ( end == user && gamePlaying)
+            userScore++;
+        else if ( end == pc && gamePlaying)
+            pcScore++;
+
         gamePlaying = false;
+
+        $('#userScore').html(userScore );
+        $('#pcScore').html(pcScore);
+    }
 
     return end;
 
