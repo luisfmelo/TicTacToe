@@ -6,6 +6,7 @@ $(document).ready(function(){
     user = "X";
     pc = "O";
     turn = 1;
+    gamePlaying = true;
 
     //Random to decide wich one starts to play
 
@@ -15,32 +16,44 @@ $(document).ready(function(){
 
 
 $( ".btn" ).click(function() {
-    if ( this.innerHTML === "" )
+    if ( this.innerHTML === "" && gamePlaying)
         this.innerHTML = user;
     else
         return;
 
     turn ++;
 
-    if ( checkEndOfGame() )
-        alert("END");
+    if (checkEndOfGame() != -1)
+        alert("END---->" + checkEndOfGame());
 
     //PC MOVE
-    pcMove();
+    if (gamePlaying)
+        pcMove();
 
+    if (checkEndOfGame() != -1)
+        alert("END---->" + checkEndOfGame());
 });
 
+/**
+ *
+ * @returns {number}: -1: not end of game; 0: tie; O/X: winner
+ */
 checkEndOfGame = function(){
     var cells = 0;
-    var end = false;
+    var end = -1;
 
     $('.btn').each(function(){
         if ( this.innerHTML === "" )
             cells ++;
     });
 
-    if ( cells == 0)
-        end = true;
+    end = checkWinner();
+
+    if ( cells === 0)
+        end = 0;
+
+    if ( end != -1)
+        gamePlaying = false;
 
     return end;
 
@@ -198,6 +211,45 @@ canWin = function(char){
 
     else
         return 0;
+}
+
+checkWinner = function(){
+//1 horizontal
+    if ($('#pos1').text() === $('#pos2').text() && $('#pos2').text() === $('#pos3').text() && $('#pos1').text() !== "" )
+        return $('#pos1').text();
+
+//2 horizontal
+    if ($('#pos4').text() === $('#pos5').text() && $('#pos5').text() === $('#pos6').text() && $('#pos4').text() !== "" )
+        return $('#pos4').text();
+
+
+//3 horizontal
+    if ($('#pos7').text() === $('#pos8').text() && $('#pos8').text() === $('#pos9').text() && $('#pos7').text() !== "" )
+        return $('#pos7').text();
+
+//1 vertical
+    if ($('#pos1').text() === $('#pos4').text() && $('#pos4').text() === $('#pos7').text() && $('#pos1').text() !== "" )
+        return $('#pos1').text();
+
+//2 vertical
+    if ($('#pos2').text() === $('#pos5').text() && $('#pos5').text() === $('#pos8').text() && $('#pos2').text() !== "" )
+        return $('#pos2').text();
+
+//3 vertical
+    if ($('#pos3').text() === $('#pos6').text() && $('#pos6').text() === $('#pos9').text() && $('#pos3').text() !== "" )
+        return $('#pos3').text();
+
+//1 diagonal
+    if ($('#pos1').text() === $('#pos5').text() && $('#pos5').text() === $('#pos9').text() && $('#pos1').text() !== "" )
+        return $('#pos1').text();
+
+
+//2 diagonal
+    if ($('#pos3').text() === $('#pos5').text() && $('#pos5').text() === $('#pos7').text() && $('#pos3').text() !== "" )
+        return $('#pos3').text();
+
+
+    return -1;
 }
 
 anywhereBlank = function (){
