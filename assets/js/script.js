@@ -3,8 +3,6 @@
  */
 
 $(document).ready(function(){
-    user = "X";
-    pc = "O";
     turn = 1;
     gamePlaying = true;
     userScore = 0;
@@ -15,7 +13,7 @@ $(document).ready(function(){
 
     //Random to decide wich one starts to play
 
-    pcMove();
+    $('.cd-popup').addClass('is-visible');
 
 });
 
@@ -54,27 +52,19 @@ checkEndOfGame = function(){
 
     end = checkWinner();
 
-    if ( cells === 0)
+    if ( cells === 0 && end == -1)
         end = 0;
 
-    if ( end != -1) {
-        if (end == user && gamePlaying) {
-            userScore++;
-            handleWin(user);
-        }
-        else if (end == pc && gamePlaying) {
-            pcScore++;
-            handleWin(pc);
-        }
-        else if (gamePlaying) {
-            handleWin(0);
-        }
+
+    if ( end != -1 && gamePlaying) {
+        handleWin(end);
         gamePlaying = false;
     }
     return end;
 };
 
 pcMove = function(){
+    console.log(turn)
     switch (turn) {
         // Turn = 1 -> Go(1)   (upper left corner).
         case 1:
@@ -96,7 +86,9 @@ pcMove = function(){
             break;
         // Turn = 4 -> If Posswin(X) is not 0, then Go(Posswin(X)) i.e. [ block opponent’s win], else Go(Make2).
         case 4:
-            if (canWin(user))
+            if (canWin(pc))
+                $('#pos' + canWin(pc)).html(pc);
+            else if (canWin(user))
                 $('#pos' + canWin(user)).html(pc);
             else if ($('#pos2').text() === "")
                 $('#pos2').html(pc);
@@ -119,6 +111,7 @@ pcMove = function(){
         // Turn = 6 -> If Posswin(O) is not 0 then Go(Posswin(O)), else if Posswin(X) is not 0, then Go(Posswin(X)), else Go(Make2).
         case 6:
             if (canWin(pc))
+                //alert(canWin(pc))
                 $('#pos' + canWin(pc)).html(pc);
             else if (canWin(user))
                 $('#pos' + canWin(user)).html(pc);
@@ -163,7 +156,7 @@ canWin = function(char){
 //1 horizontal
     if ($('#pos1').text() === char && $('#pos2').text() === char && $('#pos3').text() === "")
         return 3;
-    else if ($('#pos2').text() === char && $('#pos2').text() === char && $('#pos1').text() === "")
+    else if ($('#pos2').text() === char && $('#pos3').text() === char && $('#pos1').text() === "")
         return 1;
     else if ($('#pos1').text() === char && $('#pos3').text() === char && $('#pos2').text() === "")
         return 2;
@@ -200,7 +193,7 @@ canWin = function(char){
         return 8;
     else if ($('#pos8').text() === char && $('#pos5').text() === char && $('#pos2').text() === "")
         return 2;
-    else if ($('#pos4').text() === char && $('#pos8').text() === char && $('#pos5').text() === "")
+    else if ($('#pos2').text() === char && $('#pos8').text() === char && $('#pos5').text() === "")
         return 5;
 
 //3 vertical
@@ -287,14 +280,20 @@ anywhereBlank = function (){
 handleWin = function(char){
     $('.all').css('opacity', '0.3');
 
-    if ( char === 0)
+    console.log(char == user);
+    console.log(char == pc);
+    if ( char === 0 && gamePlaying)
         $('#end').html("TIE");
-    else if ( char.valueOf() == user.valueOf)
+    else if ( char == user && gamePlaying) {
         $('#end').html("User Won");
-    else if ( char.valueOf == pc.valueOf)
+        userScore++;
+    }
+    else if ( char == pc && gamePlaying) {
         $('#end').html("PC Won");
+        pcScore++;
+    }
     else
-        $('#end').html("PC Won");
+        $('#end').html("ERROR");
 
     $('#end').addClass("end");
 
@@ -323,3 +322,17 @@ clearAll = function(){
     turn = 1;
 
 }
+
+
+$('.opt').click(function(){
+    if ( this.innerHTML == 'X') {
+        user = 'X';
+        pc = 'O';
+    }
+    else{
+        user = 'O';
+        pc = 'X';
+    }
+
+    $('.cd-popup').removeClass('is-visible');
+});
