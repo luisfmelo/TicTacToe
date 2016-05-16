@@ -29,14 +29,14 @@ $( ".btn" ).click(function() {
     turn ++;
 
     if (checkEndOfGame() != -1)
-        alert("END---->" + checkEndOfGame());
+        console.log("END---->" + checkEndOfGame());
 
     //PC MOVE
     if (gamePlaying)
         pcMove();
 
     if (checkEndOfGame() != -1)
-        alert("END---->" + checkEndOfGame());
+        console.log("END---->" + checkEndOfGame());
 });
 
 /**
@@ -57,21 +57,21 @@ checkEndOfGame = function(){
     if ( cells === 0)
         end = 0;
 
-    if ( end != -1)
-    {
-        if ( end == user && gamePlaying)
+    if ( end != -1) {
+        if (end == user && gamePlaying) {
             userScore++;
-        else if ( end == pc && gamePlaying)
+            handleWin(user);
+        }
+        else if (end == pc && gamePlaying) {
             pcScore++;
-
+            handleWin(pc);
+        }
+        else if (gamePlaying) {
+            handleWin(0);
+        }
         gamePlaying = false;
-
-        $('#userScore').html(userScore );
-        $('#pcScore').html(pcScore);
     }
-
     return end;
-
 };
 
 pcMove = function(){
@@ -97,9 +97,11 @@ pcMove = function(){
         // Turn = 4 -> If Posswin(X) is not 0, then Go(Posswin(X)) i.e. [ block opponent’s win], else Go(Make2).
         case 4:
             if (canWin(user))
-                $('#pos' + canWin()).html(pc);
-            else
+                $('#pos' + canWin(user)).html(pc);
+            else if ($('#pos2').text() === "")
                 $('#pos2').html(pc);
+            else
+                anywhereBlank();
             break;
         // Turn = 5 -> if Posswin(X) is not 0 then Go(Posswin(X)) [i.e. win], else if Posswin(O) is not 0, then Go(Posswin(O)) [i.e. block win], else if Board[7] is blank, then Go(7), else Go(3). [to explore other possibility if there be any ].
         case 5:
@@ -109,8 +111,10 @@ pcMove = function(){
                 $('#pos' + canWin(user)).html(pc);
             else if ($('#pos7').text() === "")
                 $('#pos7').html(pc);
-            else
+            else if ($('#pos3').text() === "")
                 $('#pos3').html(pc);
+            else
+                anywhereBlank();
             break;
         // Turn = 6 -> If Posswin(O) is not 0 then Go(Posswin(O)), else if Posswin(X) is not 0, then Go(Posswin(X)), else Go(Make2).
         case 6:
@@ -118,8 +122,10 @@ pcMove = function(){
                 $('#pos' + canWin(pc)).html(pc);
             else if (canWin(user))
                 $('#pos' + canWin(user)).html(pc);
-            else
+            else if ($('#pos2').text() === "")
                 $('#pos2').html(pc);
+            else
+                anywhereBlank();
             break;
         // Turn = 7 -> If Posswin(X) is not 0 then Go(Posswin(X)), else if Posswin(X) is not 0, then Go(Posswin(O)) else go anywhere that is blank.
         case 7:
@@ -148,6 +154,7 @@ pcMove = function(){
             else
                 anywhereBlank();
             break;
+        default: alert("ERROR");
     }
     turn++;
 }
@@ -270,11 +277,49 @@ checkWinner = function(){
 anywhereBlank = function (){
     var i = 0;
     $('.btn').each(function(){
-        console.log($(this).attr('id'));
-        console.log((this.innerHTML == "") + " " + (this.innerHTML === "") + " " + ($(this).text() === "") + " " + ($(this).text() == ""));
         if ( $(this).text() == "" && i == 0) {
             $(this).html(pc);
             i ++;
         }
     });
+}
+
+handleWin = function(char){
+    $('.all').css('opacity', '0.3');
+
+    if ( char === 0)
+        $('#end').html("TIE");
+    else if ( char.valueOf() == user.valueOf)
+        $('#end').html("User Won");
+    else if ( char.valueOf == pc.valueOf)
+        $('#end').html("PC Won");
+    else
+        $('#end').html("PC Won");
+
+    $('#end').addClass("end");
+
+    $('#end').animate({
+        opacity: '1'
+    }).fadeOut(2000, function(){
+        $('.all').css('opacity', '1');
+        $('#end').html("").removeClass("end");
+        clearAll();
+    });
+}
+
+clearAll = function(){
+    $('.btn').each(function(){
+        this.innerHTML =("");
+    });
+
+    gamePlaying = true;
+
+    $('#userScore').html(userScore);
+    $('#pcScore').html(pcScore);
+
+    var temp = user;
+    user = pc;
+    pc = temp;
+    turn = 1;
+
 }

@@ -63,3 +63,21 @@ footer{
 .score{
     color:#DDD;
 }
+
+.end{
+    color:#DDD;
+    width:100%;
+    height:100%;
+    font-size: 100px;
+    font-family: Lobster;
+    text-align: center;
+    position: absolute;
+    z-index: 2;
+    margin:0 auto;
+    opacity:0;
+    color: #DDD;
+    display: block!important;
+}
+
+
+
